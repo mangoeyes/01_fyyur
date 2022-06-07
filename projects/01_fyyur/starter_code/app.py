@@ -110,7 +110,7 @@ def search_venues():
     return render_template('pages/search_venues.html', results=response, 
         search_term=search_term)
 
-@app.route('/venues/<int:venue_id>')
+@app.route('/venues/<int:venue_id>', methods=['GET'])
 def show_venue(venue_id):
     
     # basic information about the venue
