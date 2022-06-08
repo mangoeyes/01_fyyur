@@ -82,8 +82,8 @@
   const deleteBtn = document.getElementsByName('deleteButton')[0];
   deleteBtn.onclick = function(e) {
     const venueId = e.target.dataset['id'];
-    fetch("/venues/" + venueId, {
-      method: 'DELETE'
+    fetch("/venues/" + venueId + '/delete', {
+      method: 'POST'
   });
 };
 </script>
