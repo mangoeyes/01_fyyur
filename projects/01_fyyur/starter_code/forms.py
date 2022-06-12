@@ -1,27 +1,42 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, Regexp, Length, ValidationError
+import re
+
+
+def validate_phone(form, field):
+
+    phone_pattern = re.compile(r'\d{3}-\d{3}-\d{4}')
+    if re.match(phone_pattern, field.data) is None:
+        raise ValidationError('invalid phone number')
 
 class ShowForm(FlaskForm):
+    class Meta:
+        csrf = False
     artist_id = StringField(
-        'artist_id'
+        'artist_id',
+        validators=[DataRequired()],
     )
     venue_id = StringField(
-        'venue_id'
+        'venue_id',
+        validators=[DataRequired()],
     )
     start_time = DateTimeField(
         'start_time',
-        validators=[DataRequired()],
+        validators=[DataRequired(), Regexp(re.compile(r'\d{4}/\d{2}/\d{2}'), message="incorrect date format.")],
         default= datetime.today()
     )
 
 class VenueForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     name = StringField(
         'name', validators=[DataRequired()]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), Length(min=1, max=120)]
     )
     state = SelectField(
         'state', validators=[DataRequired()],
@@ -80,13 +95,15 @@ class VenueForm(FlaskForm):
         ]
     )
     address = StringField(
-        'address', validators=[DataRequired()]
+        'address', validators=[DataRequired(), Length(min=1, max=120)]
     )
     phone = StringField(
-        'phone'
+        'phone',
+        validators=[validate_phone],
     )
     image_link = StringField(
-        'image_link'
+        'image_link',
+        validators=[URL()]
     )
     genres = SelectMultipleField(
         # TODO implement enum restriction
@@ -118,21 +135,26 @@ class VenueForm(FlaskForm):
         'facebook_link', validators=[URL()]
     )
     website_link = StringField(
-        'website_link'
+        'website_link',
+        validators=[URL()]
     )
 
     seeking_talent = BooleanField( 'seeking_talent' )
 
     seeking_description = StringField(
-        'seeking_description'
+        'seeking_description',
+        validators=[Length(min=0, max=2000)]
     )
 
 class ArtistForm(FlaskForm):
+    class Meta:
+        csrf = False
+
     name = StringField(
-        'name', validators=[DataRequired()]
+        'name', validators=[DataRequired(), Length(min=0, max=120)]
     )
     city = StringField(
-        'city', validators=[DataRequired()]
+        'city', validators=[DataRequired(), Length(min=0, max=120)]
     )
     state = SelectField(
         'state', validators=[DataRequired()],
@@ -191,14 +213,14 @@ class ArtistForm(FlaskForm):
         ]
     )
     phone = StringField(
-        # TODO implement validation logic for phone 
-        'phone'
+        'phone',
+        validators=[validate_phone],
+
     )
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices=[
             ('Alternative', 'Alternative'),
@@ -224,17 +246,18 @@ class ArtistForm(FlaskForm):
         ]
     )
     facebook_link = StringField(
-        # TODO implement enum restriction
         'facebook_link', validators=[URL()]
      )
 
     website_link = StringField(
-        'website_link'
+        'website_link', validators=[URL()]
      )
 
     seeking_venue = BooleanField( 'seeking_venue' )
 
     seeking_description = StringField(
-            'seeking_description'
+            'seeking_description',
+            validators=[Length(min=0, max=2000)]
+
      )
 
