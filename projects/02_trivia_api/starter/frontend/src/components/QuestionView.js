@@ -48,7 +48,7 @@ class QuestionView extends Component {
     let maxPage = Math.ceil(this.state.totalQuestions / 10)
     for (let i = 1; i <= maxPage; i++) {
       pageNumbers.push(
-        <span
+        <span>
           key={i}
           className={`page-num ${i === this.state.page ? 'active' : ''}`}
           onClick={() => {this.selectPage(i)}}>{i}
