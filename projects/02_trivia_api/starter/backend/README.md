@@ -99,6 +99,7 @@ GET '/api/v1.0/categories'
 '6' : "Sports"}
 
 ```
+
 ## API Endpoints
 #### GET /questions
 - General:
@@ -242,7 +243,7 @@ GET '/api/v1.0/categories'
   "total_questions": 19
 }
 ```
-#### POST /questions/<int:question_id>
+#### DELETE /questions/{question_id}
 - General:
     - Deletes the question of the given ID if it exists. Returns the id of the deleted question, success value, total questions, and question list and category list based on current page number to update the frontend.
 - Sample of searching in the questions: `curl http://127.0.0.1:5000/questions/14 -X DELETE`
@@ -336,17 +337,86 @@ GET '/api/v1.0/categories'
 }
 ```
 
+#### GET /categories/{category_id}/questions
+- General:
+    - Get questions based on category. Returns the success value, total questions within the category, and question list and current category based on current page number to update the frontend.
+- Sample of searching in the questions: `curl http://127.0.0.1:5000/categories/2/questions`
 
+```
+{
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "currentCategory": 2, 
+  "questions": [
+    {
+      "answer": "Mona Lisa", 
+      "category": 2, 
+      "difficulty": 3, 
+      "id": 17, 
+      "question": "La Giaconda is better known as what?"
+    }, 
+    {
+      "answer": "One", 
+      "category": 2, 
+      "difficulty": 4, 
+      "id": 18, 
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    }, 
+    {
+      "answer": "Jackson Pollock", 
+      "category": 2, 
+      "difficulty": 2, 
+      "id": 19, 
+      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+    }
+  ], 
+  "success": true, 
+  "totalQuestions": 3
+}
+```
+#### POST /quizzes
+- General:
+    - Generate questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
+    - Returns the success value, the new question and a list of previous questions' ids.
+- Sample of searching in the questions: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"quiz_category":{"id":"2", "type":"Art"}, "previous_questions":[]}'`
 
+```
+{
+  "previous_questions": [
+    18
+  ], 
+  "question": {
+    "answer": "One", 
+    "category": 2, 
+    "difficulty": 4, 
+    "id": 18, 
+    "question": "How many paintings did Van Gogh sell in his lifetime?"
+  }, 
+  "success": true
+}
+```
 
+## Error Handling
+Errors are returned as JSON objects in the following format:
+```
+{
+ "success": False, 
+ "error": 404, 
+ "message": "resource not found"
+ }
+```
+The API will return three error types when requests fail:
 
-
-
-
-
-
-
-
+- 400: Bad Request
+- 404: Resource Not Found
+- 405: Method Not Allowed
+- 422: Not Processable
 
 ## Testing
 To run the tests, run
